@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday Mumma! 🧿💙</title>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy-bg: #0b192c;
+      --navy-dark: #020c1b;
+      --parchment-bg: #f4ecdf;
+      --parchment-border: #d4c3a3;
+      --deep-blue: #1d3557;
+      --accent-blue: #3a86ff;
+      --text-main: #2b2d42;
+      --text-muted: #5c677d;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at center, var(--navy-bg) 0%, var(--navy-dark) 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--text-main);
+      padding: 15px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Falling Elements */
+    .rain-container {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .element {
+      position: absolute;
+      top: -30px;
+      font-size: 1.4rem;
+      animation: fall linear infinite;
+      opacity: 0.8;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-30px) rotate(0deg) scale(0.8); }
+      50% { transform: translateY(50vh) rotate(180deg) scale(1.1); }
+      100% { transform: translateY(105vh) rotate(360deg) scale(0.8); }
+    }
+
+    /* Main Container Card */
+    .screen {
+      display: none;
+      width: 100%;
+      max-width: 440px;
+      background: var(--parchment-bg);
+      border-radius: 12px;
+      padding: 2rem 1.4rem;
+      text-align: center;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 0 40px rgba(180, 150, 110, 0.3);
+      position: relative;
+      z-index: 10;
+      border: 2px dashed #b89c72;
+      animation: scaleUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    .screen.active { display: block; }
+
+    @keyframes scaleUp {
+      0% { transform: scale(0.85); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    h2 { font-size: 1.4rem; color: var(--deep-blue); margin-bottom: 8px; font-weight: 700; }
+    p { font-size: 0.9rem; line-height: 1.5; color: var(--text-muted); }
+
+    /* Passcode Screen */
+    .passcode-display {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 1.5rem 0;
+    }
+
+    .pin-box {
+      width: 48px;
+      height: 48px;
+      border: 2px solid var(--deep-blue);
+      border-radius: 8px;
+      font-size: 1.8rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fffdf9;
+      color: var(--deep-blue);
+    }
+
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      max-width: 240px;
+      margin: 0 auto;
+    }
+
+    .key-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: none;
+      background: var(--deep-blue);
+      color: #ffffff;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(29, 53, 87, 0.3);
+      transition: all 0.2s;
+      margin: 0 auto;
+    }
+
+    .key-btn:hover { transform: scale(1.08); background: var(--accent-blue); }
+
+    .hint-text {
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .nav-btn {
+      margin-top: 1.5rem;
+      background: var(--deep-blue);
+      color: #ffffff;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(29, 53, 87, 0.3);
+      transition: all 0.3s;
+    }
+
+    .nav-btn:hover { transform: translateY(-2px); background: var(--accent-blue); }
+
+    /* Sept Baby Special Screen Styling */
+    .sept-baby-box {
+      background: #fffdf9;
+      padding: 2rem 1rem;
+      border-radius: 12px;
+      border: 1px solid #d4c3a3;
+      margin: 1.2rem 0;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.03);
+    }
+    .sept-title {
+      font-family: 'Caveat', cursive;
+      font-size: 2.2rem;
+      color: var(--deep-blue);
+      line-height: 1.3;
+      font-weight: 700;
+    }
+
+    /* Aesthetic Handwritten Letter Box with Custom Drop-Cap First Letter */
+    .letter-box {
+      background: #fffdf9;
+      padding: 1.3rem;
+      border-radius: 10px;
+      text-align: left;
+      font-family: 'Caveat', cursive;
+      font-size: 1.25rem;
+      line-height: 1.5;
+      border: 1px solid #d4c3a3;
+      max-height: 310px;
+      overflow-y: auto;
+      color: #1a233a;
+      margin: 1rem 0;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .letter-box strong { font-size: 1.35rem; }
+    
+    /* Custom Stylized First Letter */
+    .drop-cap {
+      float: left;
+      font-size: 3.2rem;
+      line-height: 0.8;
+      padding-top: 4px;
+      padding-right: 8px;
+      padding-left: 2px;
+      font-family: 'Caveat', cursive;
+      color: var(--deep-blue);
+      font-weight: bold;
+      text-shadow: 2px 2px 4px rgba(58, 134, 255, 0.2);
+    }
+
+    /* Interactive 18 Gift Boxes Grid */
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      max-height: 310px;
+      overflow-y: auto;
+      padding: 5px;
+      margin: 1rem 0;
+    }
+
+    .memory-box {
+      background: #fffdf9;
+      border: 2px dashed var(--accent-blue);
+      border-radius: 10px;
+      padding: 10px 4px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.04);
+    }
+
+    .memory-box:hover {
+      transform: translateY(-3px);
+      background: #f0f4ff;
+      border-color: var(--deep-blue);
+    }
+
+    .memory-box span { font-size: 1.4rem; display: block; margin-bottom: 2px; }
+    .memory-box p { font-size: 0.65rem; color: var(--deep-blue); font-weight: 600; font-family: 'Poppins', sans-serif; }
+
+    /* Popup Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(10, 25, 47, 0.8);
+      backdrop-filter: blur(6px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      padding: 20px;
+    }
+
+    .modal {
+      background: var(--parchment-bg);
+      border: 2px solid var(--deep-blue);
+      padding: 1.8rem 1.2rem;
+      border-radius: 12px;
+      max-width: 340px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      animation: popModal 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes popModal {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .modal h3 { color: var(--deep-blue); font-size: 1.1rem; margin-bottom: 8px; }
+    .modal p { color: var(--text-main); font-size: 0.95rem; margin-bottom: 15px; font-family: 'Caveat', cursive; font-size: 1.2rem; }
+
+    .evil-eye-badge { font-size: 2rem; margin-bottom: 5px; }
+  </style>
+</head>
+<body>
+
+  <!-- Rain Container -->
+  <div class="rain-container" id="rain-bg"></div>
+
+  <!-- Screen 1: Passcode -->
+  <div class="screen active" id="screen-1">
+    <div class="evil-eye-badge">🧿</div>
+    <h2>Mumma's Protected Vault</h2>
+    <p>Enter the sacred birth date (DDMM) to unlock!</p>
+    <div class="passcode-display">
+      <div class="pin-box" id="pin-0"></div>
+      <div class="pin-box" id="pin-1"></div>
+      <div class="pin-box" id="pin-2"></div>
+      <div class="pin-box" id="pin-3"></div>
+    </div>
+    <p class="hint-text" id="date-hint">Hint: 18th September (1809) ✨</p>
+    <div class="keypad">
+      <button class="key-btn" onclick="pressKey('1')">1</button>
+      <button class="key-btn" onclick="pressKey('2')">2</button>
+      <button class="key-btn" onclick="pressKey('3')">3</button>
+      <button class="key-btn" onclick="pressKey('4')">4</button>
+      <button class="key-btn" onclick="pressKey('5')">5</button>
+      <button class="key-btn" onclick="pressKey('6')">6</button>
+      <button class="key-btn" onclick="pressKey('7')">7</button>
+      <button class="key-btn" onclick="pressKey('8')">8</button>
+      <button class="key-btn" onclick="pressKey('9')">9</button>
+      <button class="key-btn" onclick="clearPin()">C</button>
+      <button class="key-btn" onclick="pressKey('0')">0</button>
+      <button class="key-btn" onclick="checkPin()">✓</button>
+    </div>
+  </div>
+
+  <!-- Screen 1.5: Happy Birthday to the Sept Baby -->
+  <div class="screen" id="screen-sept">
+    <div style="font-size: 2.8rem; margin-bottom: 8px;">✨🧿🎀</div>
+    <h2>A Special Moment</h2>
+    <div class="sept-baby-box">
+      <p style="font-size: 0.9rem; color: var(--text-muted); font-family: 'Poppins', sans-serif; margin-bottom: 8px;">Celebrating the most precious soul...</p>
+      <div class="sept-title">Happy Birthday to the Sept Baby! 💙🎂</div>
+    </div>
+    <button class="nav-btn" onclick="goToScreen('screen-2')">Read Letter 💌</button>
+  </div>
+
+  <!-- Screen 2: Deeply Emotional Custom Letter -->
+  <div class="screen" id="screen-2">
+    <div class="evil-eye-badge">🧿💙</div>
+    <h2>HAPPY BIRTHDAY MUMMA!</h2>
+    <div class="letter-box">
+      <p><strong>To the most beautiful soul 🌸, the kindest heart 🤍, and the strongest woman I know—Happy, Happy Birthday! 🎉💐</strong></p><br>
+      <p>
+        <span class="drop-cap">M</span>umma... Where do I even begin? 🥺 When I look at you, I don't just see a mother; I see a quiet warrior. 🛡️✨ I see someone who absorbs all the harshness, the noise, and the toxic weight of this world onto her own shoulders just to keep us safe, smiling, and untouched by it all. 🌧️❌<br><br>
+        I know how hard you fight every single day, how you put on a brave face and act strong even when your own heart is tired and heavy. 💔 But please know, Mumma... I notice it. I see every single sacrifice you make in silence, and it breaks me and fuels me at the exact same time. 🕯️🔥<br><br>
+        You are the anchor of my life. ⚓ Without you, I am nothing. You give up your own peace so we can have ours, and you love us so unconditionally that it sometimes feels too heavy to even put into words. 😭💕 You deserve the absolute universe, the softest comforts, and a life completely free of worries. 🌍✨<br><br>
+        Today, on your special day, I am making a solemn promise to you right here, right now, with my entire soul:<br>
+        💪 I will do whatever it takes. Every single late night 🌙, every grueling hour of study 📚, every drop of sweat—it is all for you. I will conquer my targets, I will crack NEET, and I will rise above everything. 🎯🔥<br><br>
+        🤫 I am going to make you so unfathomably proud that those same people who ever tried to bring us down, who ever spoke a single shitty word against us, will have nothing left to do but stay silent. I promise you, Mumma, I will shut every single one of their mouths with my success. 🤫🏆<br><br>
+        You mean the world, the galaxies, the infinite stars to me. ✨🌌 I pray to God today and every single day for your good health, your lifelong prosperity, your inner peace, and a life filled with endless smiles and comfort that you so richly deserve. 🙏🌿🥂
+      </p><br>
+      <p>Thank you for being my everything. I love you beyond words, beyond limits, and beyond time, Mumma! 🎂💖🎊👑</p>
+    </div>
+    <button class="nav-btn" onclick="goToScreen('screen-3')">Open 18 Gift Surprises 🎁</button>
+  </div>
+
+  <!-- Screen 3: 18 Custom Gift Boxes Grid -->
+  <div class="screen" id="screen-3">
+    <h2>18 Special Gift Boxes 🎁</h2>
+    <p style="font-size:0.75rem;">Tap each box to unlock 18 reasons why you're the best!</p>
+    <div class="memory-grid" id="gifts-grid"></div>
+    <button class="nav-btn" onclick="goToScreen('screen-4')">Final Page 💙</button>
+  </div>
+
+  <!-- Screen 4: Final Love Message Screen -->
+  <div class="screen" id="screen-4">
+    <div style="font-size:3rem; margin-bottom:4px;">🧿💙🎀</div>
+    <h2>My Everything</h2>
+    <div style="margin: 1.2rem 0; font-size: 1.15rem; font-family: 'Caveat', cursive; font-weight: bold; color: var(--deep-blue); line-height: 1.4; text-align: left; padding: 0 10px;">
+      "I will conquer my targets, I will crack NEET, and I will make you so proud that everyone stays silent. Love u soo soo much Mumma! 😘🧿✨"
+    </div>
+    <button class="nav-btn" onclick="goToScreen('screen-1')">Back to Start 💌</button>
+  </div>
+
+  <!-- Popup Modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <div style="font-size: 2.5rem; margin-bottom: 6px;" id="modal-emoji">🧿</div>
+      <h3 id="modal-title">Special Message</h3>
+      <p id="modal-desc">Message here</p>
+      <button class="nav-btn" style="margin-top:0; padding: 10px 24px;" onclick="closeModal()">Close ✨</button>
+    </div>
+  </div>
+
+  <script>
+    const CONFIG = {
+      passcode: "1809",
+      memories: [
+        { emoji: "🧿", title: "1. My Ultimate Shield", desc: "Aapki duayein aur aapka pyaar mere liye sabse bada suraksha kavach hai. Nazar na lage meri mumma ko! 💙" },
+        { emoji: "🎀", title: "2. Pure Elegance & Grace", desc: "Aapka calm nature aur sabko sath lekar chalne ki ada hum sabke liye ek inspiration hai." },
+        { emoji: "☕", title: "3. Your Endless Care", desc: "Late-night studies ya meri har choti zidd, aapne hamesha mera dhyan rakha hai. Thank you Mumma! ❤️" },
+        { emoji: "✨", title: "4. Making You Proud", desc: "Mera sirf ek hi sapna hai—apni mehnat se aapke chehre par wo sabse badi wali khushi lana! 🌟" },
+        { emoji: "💙", title: "5. My Safe Haven", desc: "Chahe kitni bhi pareshani ho, aapke paas aakar ek alag hi sukoon milta hai." },
+        { emoji: "👑", title: "6. Our Gorgeous Queen", desc: "Aapke bina meri life kuch bhi nahi hai. You are my strength, my best friend, and my world! 🤗" },
+        { emoji: "🌸", title: "7. Softness & Warmth", desc: "Aapki smile se hi hamara poora ghar roshan hota hai, Mumma." },
+        { emoji: "🌟", title: "8. My Guiding Star", desc: "Jab bhi main rasta bhulun, aapki advice hamesha mujhe sahi direction deti hai." },
+        { emoji: "🤍", title: "9. Purest Heart", desc: "Aapke jaisa saaf dil insaan maine apni poori life mein nahi dekha." },
+        { emoji: "🌷", title: "10. Endless Patience", desc: "Meri saari nadaniyan aur gusse ko itne pyaar se handle karne ke liye thank you!" },
+        { emoji: "🏡", title: "11. Home is Where You Are", desc: "Duniya mein kahin bhi rahu, sukoon sirf aapke paas aakar hi milta hai." },
+        { emoji: "💫", title: "12. Magical Strength", desc: "Aapki andar ki taakat dekh kar mujhe bhi strong banne ki himmat milti hai." },
+        { emoji: "🎁", title: "13. God's Best Gift", desc: "Bhagwan ne mujhe duniya ka sabse best tohfa diya hai—aap!" },
+        { emoji: "🌙", title: "14. Late Night Partner", desc: "Meri saari raat ki padhai aur baaton mein hamesha mera sath dene ke liye thanks." },
+        { emoji: "🔥", title: "15. My Biggest Supporter", desc: "Mera har chota step ho ya bada target, aapne hamesha mera confidence badhaya hai." },
+        { emoji: "🧿", title: "16. Nazar Se Door", desc: "Hamesha khush raho aur buri nazaron se hamesha mehfooz raho." },
+        { emoji: "🏆", title: "17. My Real Hero", desc: "Mere liye aap hi real-life superhero ho, kisi movie character ki zaroorat nahi." },
+        { emoji: "💖", title: "18. Infinite Love", desc: "Aapse jitna pyaar karti hu, wo shabdo mein bayan hi nahi ho sakta. Love you Mumma!" }
+      ]
+    };
+
+    let currentPin = "";
+
+    const gridContainer = document.getElementById('gifts-grid');
+    CONFIG.memories.forEach((mem, index) => {
+      let box = document.createElement('div');
+      box.className = 'memory-box';
+      box.onclick = () => openMemory(index + 1);
+      box.innerHTML = `<span>${mem.emoji}</span><p>Gift #${index + 1}</p>`;
+      gridContainer.appendChild(box);
+    });
+
+    const rainContainer = document.getElementById('rain-bg');
+    const items = ['🧿', '💙', '🎀', '✨', '🤍', '⭐'];
+    for (let i = 0; i < 28; i++) {
+      let el = document.createElement('div');
+      el.className = 'element';
+      el.innerText = items[Math.floor(Math.random() * items.length)];
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.animationDuration = (3.5 + Math.random() * 5) + 's';
+      el.style.animationDelay = Math.random() * 5 + 's';
+      rainContainer.appendChild(el);
+    }
+
+    function pressKey(num) {
+      if (currentPin.length < 4) {
+        currentPin += num;
+        document.getElementById(`pin-${currentPin.length - 1}`).innerText = "•";
+      }
+    }
+
+    function clearPin() {
+      currentPin = "";
+      for(let i=0; i<4; i++) document.getElementById(`pin-${i}`).innerText = "";
+    }
+
+    function checkPin() {
+      if (currentPin === CONFIG.passcode) {
+        confetti({ particleCount: 90, spread: 100, origin: { y: 0.6 }, colors: ['#3a86ff', '#1d3557', '#ffffff'] });
+        setTimeout(() => {
+          goToScreen('screen-sept');
+        }, 400);
+      } else {
+        alert(`Galat passcode hai! Hint: 1809 (18 September)`);
+        clearPin();
+      }
+    }
+
+    function goToScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+    }
+
+    function openMemory(index) {
+      const data = CONFIG.memories[index - 1];
+      document.getElementById('modal-emoji').innerText = data.emoji;
+      document.getElementById('modal-title').innerText = data.title;
+      document.getElementById('modal-desc').innerText = data.desc;
+      document.getElementById('modal-overlay').style.display = 'flex';
+      
+      confetti({ particleCount: 30, spread: 50, colors: ['#3a86ff', '#1d3557', '#ffffff'] });
+    }
+
+    function closeModal() {
+      document.getElementById('modal-overlay').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
